@@ -1,0 +1,59 @@
+
+{% extends 'static/base.html' %}
+
+{%block titulo%}Lista de tareas{%endblock%}
+{% block body%}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h1 class="my-5 text-center ">Tareas</h1>
+
+            {%if update%}
+            <form action={% url 'update' %} method="POST" class="card card-body my-4">
+                {% csrf_token %}
+                <label for="titulo">Título:</label>
+                <input class="form-control my-2" type="text" name="titulo" id="titulo" value="{{update.titulo}}">
+                <label for="desc">Descripción:</label>
+                <textarea class="form-control my-2" name="desc" id="desc" rows="3">{{update.desc}}</textarea>
+                <input type="hidden" name="id" value="{{update.id}}"/>
+                <button type="submit" class="btn btn-info">Actualizar</button>
+            </form>
+            {%else%}
+            <form action={% url 'createTask'%} method="POST" class="card card-body my-4">
+                {% csrf_token %}
+                <label for="titulo">Título:</label>
+                <input class="form-control my-2" type="text" name="titulo" placeholder="Título de la nota" required>
+                <label for="desc">Descripción:</label>
+                <textarea class="form-control my-2" name="desc" rows="3" placeholder="Escribe la descripción" required></textarea>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </form>
+            {%endif%}            
+        </div>
+    </div>
+    {%for t in Tareas%}
+
+        <div class="card card-body col-md-6 offset-md-3 text-center border-warning mb-3">
+            <h4  class="card-header">{{t.titulo}}</h4>
+            <p class="card-body ">{{t.desc}}</p>
+                <div class="row">
+                    <div class="col-6">
+                        <form action="{% url 'deleteTask' t.id%}" method="POST" class="text-center" >
+                            {% csrf_token %}
+                            <button class="btn btn-danger">Eliminar</button>
+                        </form>
+                    </div>
+                    <div class="col-6">
+                        
+                        <form action="{% url 'updateTask' t.id%}" method="POST" class="text-center" >
+                            {% csrf_token %}
+                            <button class="btn btn-primary">Actualizar</button>
+                        </form>
+                    </div>
+                </div>
+        </div>
+    {%empty%} 
+    <h2 class="text-center my-5">No hay tareas</h2>
+
+    {%endfor%}
+</div>
+{% endblock %}
